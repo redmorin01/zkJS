@@ -72,3 +72,23 @@ String.prototype.getAfter = function(param){
     var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getAfter."+zk().tool().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
+
+var stringGetBetweenPath = "_ENTITY_._PARAMETERS_.string.getBetween.";
+zk().setContainer(stringGetBetweenPath + "array", function (el, param) {
+    var i, t, k, res = "";
+    k = param.length;
+    for (i = 0; i < k; i += 2) {
+        t = [Math.abs(param[i]), Math.abs(param[i + 1])];
+        if(isNaN(t[1])){ t[1] = el.length }
+        if (zk().tool().is(t[0], 'number') && zk().tool().is(t[1], 'number')) {
+            t = zk().tool().nSort(t);
+            res = res.concat(el.slice(t[0] + 1, t[1]))
+        }
+    }
+    return res
+});
+String.prototype.getBetween = function(param){
+    if(param===undefined){ return "" }
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getBetween."+zk().tool().is(param));
+    return paramFunc ? paramFunc(this, param) : "";
+};

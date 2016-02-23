@@ -245,6 +245,17 @@
             return el
         }
         this.toArray = function (el) { return [].slice.call(el) }
+        this.nSort = function(array){
+            return array.sort(function (a, b) {
+                if (a < b) {
+                    return -1
+                } else if (a > b) {
+                    return 1
+                } else {
+                    return 0
+                }
+            })
+        };
     }
 
     APP._TOOL_ = new _TOOL_();
