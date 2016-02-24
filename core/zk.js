@@ -21,9 +21,9 @@
             return this._CONTAINER_.remove(path);
         },
 
-        // Raccourcis vers _TOOL_
-        "tool": function () {
-            return this._TOOL_;
+        // Raccourcis vers _TOOLBOX_
+        "toolbox": function () {
+            return this._TOOLBOX_;
         },
 
     };
@@ -53,8 +53,8 @@
                     temp = temp[arrayPath[i]];
                 }
                 var v = temp[arrayPath[n - 1]];
-                if (!APP._TOOL_.is(v, "object") && v !== undefined) {
-                    if (!APP._TOOL_.is(v, "array")) {
+                if (!APP._TOOLBOX_.is(v, "object") && v !== undefined) {
+                    if (!APP._TOOLBOX_.is(v, "array")) {
                         v = [v]
                     }
                     value = v.concat(value);
@@ -79,7 +79,7 @@
 
     APP._CONTAINER_ = new _CONTAINER_();
 
-    function _TOOL_() {
+    function _TOOLBOX_() {
         var This = this;
         this.is = function (el, type) {
             if (el === null) {
@@ -192,22 +192,18 @@
          * @param  {[String]} strIndex [Les index ou les clés à ignorer séparé par des espaces]
          * @return {[Array/Object]}          Elle retourne l'objet sur lequel elle s'applique
          */
-        this.each = function (el, f, args, strIndex) {
+        this.each = function (el, f, args) {
             if (This.is(f, 'function')) {
                 var t = This.is(el);
                 if (doEachByObj.hasOwnProperty(t)) {
-                    if (args === undefined) {
-                        args = []
-                    }
-                    if (!This.is(args, 'array')) {
-                        args = [args]
-                    }
-                    el = doEachByObj[t](el, f, args, strIndex);
+                    if (args === undefined) { args = [] }
+                    if (!This.is(args, 'array')) { args = [args] }
+                    el = doEachByObj[t](el, f, args);
                 }
             }
             return el
-        }
-        this.toArray = function (el) { return [].slice.call(el) }
+        };
+        this.toArray = function (el) { return [].slice.call(el) };
         this.nSort = function(array){
             return array.sort(function (a, b) {
                 if (a < b) {
@@ -221,7 +217,7 @@
         };
     }
 
-    APP._TOOL_ = new _TOOL_();
+    APP._TOOLBOX_ = new _TOOLBOX_();
 
     function _ENTITY_() {
         /**
@@ -249,17 +245,17 @@
             if ((typeof(entityFunc)).toLowerCase() !== 'function') { return false }
             var name = entityFunc.name;
             if (!name || APP._CONTAINER_.get("_ENTITY_." + (name.toLowerCase()))) { return false }
-            if (!APP._TOOL_.is(methods, "object")) { methods = {} }
-            APP._TOOL_.each(methods, function () { entityFunc.prototype[this.k] = this.v; });
+            if (!APP._TOOLBOX_.is(methods, "object")) { methods = {} }
+            APP._TOOLBOX_.each(methods, function () { entityFunc.prototype[this.k] = this.v; });
             APP.setContainer("_ENTITY_." + (name.toLowerCase()), entityFunc);
-            if (!APP._TOOL_.is(parameters, "object")) { parameters = {} }
-            APP._TOOL_.each(parameters, function () {
+            if (!APP._TOOLBOX_.is(parameters, "object")) { parameters = {} }
+            APP._TOOLBOX_.each(parameters, function () {
                 APP.setContainer("_ENTITY_._PARAMETERS_." + (name.toLowerCase()) + "." + this.k, this.v);
             });
             return APP;
         };
         this.get = function (selector) {
-            var name = APP._TOOL_.is(selector), func = APP.getContainer("_ENTITY_._CONVERTOR_." + name), res;
+            var name = APP._TOOLBOX_.is(selector), func = APP.getContainer("_ENTITY_._CONVERTOR_." + name), res;
             if (func) { res = func(selector); name = res[0]; selector = res[1]; }
             var entity = APP.getContainer("_ENTITY_." + name);
             if ((typeof(entityFunc)).toLowerCase() !== 'function') {
@@ -281,8 +277,8 @@
      *
      */
     APP.setContainer("_ENTITY_._CONVERTOR_.nodeelement", function (el) { return ["node", [el]] });
-    APP.setContainer("_ENTITY_._CONVERTOR_.htmlcollection", function (el) { return ["node", APP._TOOL_.toArray(el)] });
-    APP.setContainer("_ENTITY_._CONVERTOR_.nodelist", function (el) { return ["node", APP._TOOL_.toArray(el)] });
+    APP.setContainer("_ENTITY_._CONVERTOR_.htmlcollection", function (el) { return ["node", APP._TOOLBOX_.toArray(el)] });
+    APP.setContainer("_ENTITY_._CONVERTOR_.nodelist", function (el) { return ["node", APP._TOOLBOX_.toArray(el)] });
 
     $W.$ = function (selector) { return APP.get(selector); };
     $W.zk = function (selector) { if (selector === undefined) { return APP } };

@@ -4,14 +4,15 @@
  *      Par exemple : "[abg]", "a|b|c"
  * @returns {string}
  */
-String.prototype.trim = function(strReg){ return zk().tool().trim(this, strReg) };
+String.prototype.trim = function(strReg){ return zk().toolbox().trim(this, strReg) };
+String.prototype.each = function(func, args){ return zk().toolbox().each(this, func, args) };
 
 var stringGetFirstPath = "_ENTITY_._PARAMETERS_.string.getFirst.";
 zk().setContainer(stringGetFirstPath+"regexp", function(el, param){ var r = el.match(param); return r ? r[0] : ''; });
 zk().setContainer(stringGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
 String.prototype.getFirst = function(param){
     if(param===undefined){param=1}
-    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getFirst."+zk().tool().is(param));
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getFirst."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
@@ -31,7 +32,7 @@ zk().setContainer(stringGetLastPath+"regexp", function(el, param){
 zk().setContainer(stringGetLastPath+"number", function(el, param){ return el.slice(-param) });
 String.prototype.getLast = function(param){
     if(param===undefined){param=1}
-    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getLast."+zk().tool().is(param));
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getLast."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
@@ -50,7 +51,7 @@ zk().setContainer(stringGetBeforePath+"regexp", function(el, param){
 zk().setContainer(stringGetBeforePath + "number", function (el, param) { return el.slice(0, Math.abs(param)) });
 String.prototype.getBefore = function(param){
     if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getBefore."+zk().tool().is(param));
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getBefore."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
@@ -69,7 +70,7 @@ zk().setContainer(stringGetAfterPath+"regexp", function(el, param){
 zk().setContainer(stringGetAfterPath + "number", function (el, param) { return el.slice(Math.abs(param) + 1) });
 String.prototype.getAfter = function(param){
     if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getAfter."+zk().tool().is(param));
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getAfter."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
@@ -80,8 +81,8 @@ zk().setContainer(stringGetBetweenPath + "array", function (el, param) {
     for (i = 0; i < k; i += 2) {
         t = [Math.abs(param[i]), Math.abs(param[i + 1])];
         if(isNaN(t[1])){ t[1] = el.length }
-        if (zk().tool().is(t[0], 'number') && zk().tool().is(t[1], 'number')) {
-            t = zk().tool().nSort(t);
+        if (zk().toolbox().is(t[0], 'number') && zk().toolbox().is(t[1], 'number')) {
+            t = zk().toolbox().nSort(t);
             res = res.concat(el.slice(t[0] + 1, t[1]))
         }
     }
@@ -89,7 +90,7 @@ zk().setContainer(stringGetBetweenPath + "array", function (el, param) {
 });
 String.prototype.getBetween = function(param){
     if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getBetween."+zk().tool().is(param));
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getBetween."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
@@ -98,9 +99,9 @@ String.prototype.getBetween = function(param){
 var stringGetAtPath = "_ENTITY_._PARAMETERS_.string.getAt.";
 zk().setContainer(stringGetAtPath + "array", function (el, param) {
     var n, k = el.length, res = '';
-    zk().tool().each(param, function () {
+    zk().toolbox().each(param, function () {
         n = Math.abs(this.v);
-        if (zk().tool().is(n, 'number')) {
+        if (zk().toolbox().is(n, 'number')) {
             if (n < k) {
                 res = res.concat(el[n])
             }
@@ -108,8 +109,9 @@ zk().setContainer(stringGetAtPath + "array", function (el, param) {
     });
     return res
 });
+zk().setContainer(stringGetAtPath + "number", function (el, param) { return zk().getContainer(stringGetAtPath + "array")(el, [param]) });
 String.prototype.getAt = function(param){
     if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getAt."+zk().tool().is(param));
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getAt."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
