@@ -92,3 +92,24 @@ String.prototype.getBetween = function(param){
     var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getBetween."+zk().tool().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
+
+
+
+var stringGetAtPath = "_ENTITY_._PARAMETERS_.string.getAt.";
+zk().setContainer(stringGetAtPath + "array", function (el, param) {
+    var n, k = el.length, res = '';
+    zk().tool().each(param, function () {
+        n = Math.abs(this.v);
+        if (zk().tool().is(n, 'number')) {
+            if (n < k) {
+                res = res.concat(el[n])
+            }
+        }
+    });
+    return res
+});
+String.prototype.getAt = function(param){
+    if(param===undefined){ return "" }
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.getAt."+zk().tool().is(param));
+    return paramFunc ? paramFunc(this, param) : "";
+};

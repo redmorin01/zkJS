@@ -113,63 +113,26 @@
             return str.replace(reg, '')
         };
         var doEachByObj = {
-            string: function (el, f, args, strIndex, node) {
-                var i, k, isOk, res = '', r, ob, strIndex2 = ' ' + strIndex + ' ';
+            string: function (el, f, args) {
+                var i, k, res = (This.is(el, 'string')) ? '' : [], r, ob;
                 k = el.length;
                 for (i = 0; i < k; i++) {
                     ob = {i: i, k: i, v: el[i], l: k, all: el};
-                    if (node === ZKID) {
-                        ob.node = el[i];
-                        ob.name = trim(el[i].nodeName.toLowerCase(), '#')
-                    }
-                    //console.log(ob);
-                    if (strIndex) {
-                        isOk = RegExp(' 0*' + i + ' ').test(strIndex2);
-                        if (isOk) {
-                            r = el[i]
-                        } else {
-                            r = f.apply(ob, args);
-                            if (r === undefined) {
-                                r = el[i]
-                            }
-                        }
-                        if (is(el, 'array')) {
-                            el[i] = r
-                        } else {
-                            res = res.concat(r)
-                        }
-                    } else {
-                        r = f.apply(ob, args);
-                        if (r === undefined) {
-                            r = el[i]
-                        }
-                        if (is(el, 'array')) {
-                            el[i] = r
-                        } else {
-                            res = res.concat(r)
-                        }
-                    }
+                    r = f.apply(ob, args);
+                    if (r === undefined) { r = el[i] }
+                    res = res.concat(r)
                 }
-                return is(el, 'array') ? el : res;
+                return res;
             },
-            number: function (el, f, args, strIndex) {
-                var i, isOk;
+            number: function (el, f, args) {
                 el = Math.abs(el);
-                for (i = 0; i < el; i++) {
-                    if (strIndex) {
-                        isOk = RegExp(' 0*' + i + ' ').test(' ' + strIndex + ' ');
-                        if (!isOk) {
-                            f.apply({i: i, all: el}, args)
-                        }
-                    } else {
-                        f.apply({i: i, all: el}, args);
-                    }
+                for (var i = 0; i < el; i++) {
+                    f.apply({i: i, all: el}, args);
                 }
                 return el
             },
-            array: function (el, f, args, strIndex, node) {
-                return doEachByObj.string(el, f, args, strIndex, node)
-            },
+            array: function (el, f, args) { return doEachByObj.string(el, f, args) },
+
             object: function (el, f, args, strIndex) {
                 var i, isOk, r, ob;
                 for (i in el) {
