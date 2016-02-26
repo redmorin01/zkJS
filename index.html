@@ -6,14 +6,25 @@
 </head>
 <body>
 
+<div class="test">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto explicabo mollitia ratione rem. Dicta eaque error id inventore labore neque sit voluptatem. At commodi cum dignissimos minus quas quo recusandae!</div>
+<ul>
+    <li>test1</li>
+    <li>test2</li>
+    <li>test3</li>
+    <li>test4</li>
+    <li>test5</li>
+</ul>
 
 <script src="core/zk.js"></script>
 <script src="entity/stringEntity.js"></script>
 <script src="entity/arrayEntity.js"></script>
+<script src="entity/nodeEntity.js"></script>
 <script>
 
-console.log(["alpha","beta","gamma","delta",22,"alpha"].has(/alpha/));
-//console.log(["alpha","beta","gamma","delta"].getLast(""));
+    //console.log(["alpha","beta","gamma","delta",22,"alpha"].has(/alpha/));
+    //console.log(["alpha","beta","gamma","delta"].getLast(""));
+    var el=$("body, head");
+    console.log(el.getFirst("div").get());
 
 </script>
 
