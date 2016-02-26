@@ -17,7 +17,7 @@ zk().setContainer(arrayGetFirstPath+"regexp", function(el, param){
 Array.prototype.getFirst = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetFirstPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
 Array.prototype.getMiddle = function(){
@@ -42,7 +42,7 @@ zk().setContainer(arrayGetLastPath+"regexp", function(el, param){
 Array.prototype.getLast = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetLastPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
 var arrayGetBeforePath = "_ENTITY_._PARAMETERS_.array.getBefore.";
@@ -62,7 +62,7 @@ zk().setContainer(arrayGetBeforePath+"regexp", function(el, param){
 Array.prototype.getBefore = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetBeforePath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
 var arrayGetAfterPath = "_ENTITY_._PARAMETERS_.array.getAfter.";
@@ -82,41 +82,26 @@ zk().setContainer(arrayGetAfterPath+"regexp", function(el, param){
 Array.prototype.getAfter = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetAfterPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
+//var arrayGetBetweenPath = "_ENTITY_._PARAMETERS_.array.getBetween.";
+//zk().setContainer(arrayGetBetweenPath+"array", function(el, param){
+//    var k = 0;
+//
+//});
+//
+//Array.prototype.getBetween = function(param){
+//    if(param===undefined){param=1}
+//    var paramFunc = zk().getContainer(arrayGetBetweenPath+zk().toolbox().is(param));
+//    return paramFunc ? paramFunc(this, param) : "";
+//};
+//
 
-
-
-
-
-
-
-
-
-var stringGetBetweenPath = "_ENTITY_._PARAMETERS_.string.getBetween.";
-zk().setContainer(stringGetBetweenPath + "array", function (el, param) {
-    var i, t, k, res = "";
-    k = param.length;
-    for (i = 0; i < k; i += 2) {
-        t = [Math.abs(param[i]), Math.abs(param[i + 1])];
-        if(isNaN(t[1])){ t[1] = el.length }
-        if (zk().toolbox().is(t[0], 'number') && zk().toolbox().is(t[1], 'number')) {
-            t = zk().toolbox().nSort(t);
-            res = res.concat(el.slice(t[0] + 1, t[1]))
-        }
-    }
-    return res
-});
-Array.prototype.getBetween = function(param){
-    if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer(stringGetBetweenPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
-};
-
-var stringGetAtPath = "_ENTITY_._PARAMETERS_.string.getAt.";
-zk().setContainer(stringGetAtPath + "array", function (el, param) {
-    var n, k = el.length, res = '';
+var arrayGetAtPath = "_ENTITY_._PARAMETERS_.array.getAt.";
+zk().setContainer(arrayGetAtPath + "number", function (el, param) { return zk().getContainer(arrayGetAtPath + "array")(el, [param]) });
+zk().setContainer(arrayGetAtPath + "array", function (el, param) {
+    var n, k = el.length, res = [];
     zk().toolbox().each(param, function () {
         n = Math.abs(this.v);
         if (zk().toolbox().is(n, 'number')) {
@@ -127,12 +112,20 @@ zk().setContainer(stringGetAtPath + "array", function (el, param) {
     });
     return res
 });
-zk().setContainer(stringGetAtPath + "number", function (el, param) { return zk().getContainer(stringGetAtPath + "array")(el, [param]) });
 Array.prototype.getAt = function(param){
-    if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer(stringGetAtPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    if(param===undefined){ return [] }
+    var paramFunc = zk().getContainer(arrayGetAtPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : [];
 };
+
+
+
+
+
+
+
+
+
 
 var stringGetPath = "_ENTITY_._PARAMETERS_.string.get.";
 /**
