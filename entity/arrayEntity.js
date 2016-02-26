@@ -5,7 +5,6 @@ zk().setContainer(arrayGetFirstPath+"number", function(el, param){ return el.sli
 zk().setContainer(arrayGetFirstPath+"string", function(el, param){
     return zk().getContainer(arrayGetFirstPath+"regexp")(el, new RegExp(param));
 });
-
 zk().setContainer(arrayGetFirstPath+"regexp", function(el, param){
     var k = el.length;
     for(var i = 0; i < k; i++){
@@ -15,7 +14,6 @@ zk().setContainer(arrayGetFirstPath+"regexp", function(el, param){
     }
     return [];
 });
-
 Array.prototype.getFirst = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetFirstPath+zk().toolbox().is(param));
@@ -27,23 +25,39 @@ Array.prototype.getMiddle = function(){
     return (l % 2) ? this.slice(n, n + 1) : this.slice(n - 1, n + 1)
 };
 
-var stringGetLastPath = "_ENTITY_._PARAMETERS_.string.getLast.";
-zk().setContainer(stringGetLastPath+"regexp", function(el, param){
-    (''+param).replace(/^\/(.*)\/([gi]*)$/, function(str, s1, s2){
-        param = new RegExp(s1, s2.trim("g")+"g");
-    });
-    var r = el.match(param);
-    return r ? r[r.length - 1] : '';
+var arrayGetLastPath = "_ENTITY_._PARAMETERS_.array.getLast.";
+zk().setContainer(arrayGetLastPath+"number", function(el, param){ return el.slice(-Math.abs(param)) });
+zk().setContainer(arrayGetLastPath+"string", function(el, param){
+    return zk().getContainer(arrayGetLastPath+"regexp")(el, new RegExp(param));
 });
-zk().setContainer(stringGetLastPath+"number", function(el, param){ return el.slice(-param) });
+zk().setContainer(arrayGetLastPath+"regexp", function(el, param){
+    var k = el.length;
+    for(var i = (k-1); i+1 ; i--){
+        if(param.test(el[i])){
+            return [el[i]];
+        }
+    }
+    return [];
+});
+
 Array.prototype.getLast = function(param){
     if(param===undefined){param=1}
-    var paramFunc = zk().getContainer(stringGetLastPath+zk().toolbox().is(param));
+    var paramFunc = zk().getContainer(arrayGetLastPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
-var stringGetBeforePath = "_ENTITY_._PARAMETERS_.string.getBefore.";
-zk().setContainer(stringGetBeforePath + "string", function (el, param) {
+
+
+
+
+
+
+
+
+
+
+var arrayGetBeforePath = "_ENTITY_._PARAMETERS_.array.getBefore.";
+zk().setContainer(arrayGetBeforePath + "string", function (el, param) {
     param = el.match(param);
     if (!param) { return '' }
     param = param[0];
