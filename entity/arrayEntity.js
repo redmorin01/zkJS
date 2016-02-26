@@ -1,5 +1,76 @@
 Array.prototype.each = function(func, args){ return zk().toolbox().each(this, func, args) };
 
+
+
+var arrayIndexPath = "_ENTITY_._PARAMETERS_.array.index.";
+/**
+ *  Pour un argument de type number :
+ * Le résulat est un nombre correspondant à l'index de l'élément recherché
+ */
+zk().setContainer(arrayIndexPath+"number", function(el, param){
+    var k = el.length;
+    for(var i=0; i < k; i++){
+        if(el[i] === param){
+            return i;
+        }
+    }
+    return null;
+});
+zk().setContainer(arrayIndexPath+"string", function(el, param){
+    return zk().getContainer(arrayIndexPath+"regexp")(el, new RegExp(param));
+});
+zk().setContainer(arrayIndexPath+"regexp", function(el, param){
+    var k = el.length;
+    for(var i = 0; i < k ; i++){
+        if(param.test(el[i])){
+            return i;
+        }
+    }
+    return null;
+});
+Array.prototype.index = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayIndexPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : [];
+};
+
+var arrayCountPath = "_ENTITY_._PARAMETERS_.array.count.";
+zk().setContainer(arrayCountPath+"number", function(el, param){
+    var count = 0;
+    zk().toolbox().each(el,function(){
+        if(this.v === param){
+            count++;
+        }
+    });
+    return count;
+});
+zk().setContainer(arrayCountPath+"string", function(el, param){
+    return zk().getContainer(arrayCountPath+"regexp")(el, new RegExp(param));
+});
+zk().setContainer(arrayCountPath+"regexp", function(el, param){
+    var count = 0;
+    zk().toolbox().each(el,function(){
+        if(param.test(this.v)){
+            count++;
+        }
+    });
+    return count;
+});
+Array.prototype.count = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayCountPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : [];
+};
+
+
+Array.prototype.has = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayIndexPath+zk().toolbox().is(param));
+    var ok =  paramFunc ? paramFunc(this, param)+1 : false;
+    return ok ? true : false;
+};
+
+
 var arrayGetFirstPath = "_ENTITY_._PARAMETERS_.array.getFirst.";
 zk().setContainer(arrayGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
 zk().setContainer(arrayGetFirstPath+"string", function(el, param){
@@ -17,7 +88,7 @@ zk().setContainer(arrayGetFirstPath+"regexp", function(el, param){
 Array.prototype.getFirst = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetFirstPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
 Array.prototype.getMiddle = function(){
@@ -42,7 +113,7 @@ zk().setContainer(arrayGetLastPath+"regexp", function(el, param){
 Array.prototype.getLast = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetLastPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
 var arrayGetBeforePath = "_ENTITY_._PARAMETERS_.array.getBefore.";
@@ -62,7 +133,7 @@ zk().setContainer(arrayGetBeforePath+"regexp", function(el, param){
 Array.prototype.getBefore = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetBeforePath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
 var arrayGetAfterPath = "_ENTITY_._PARAMETERS_.array.getAfter.";
@@ -82,41 +153,53 @@ zk().setContainer(arrayGetAfterPath+"regexp", function(el, param){
 Array.prototype.getAfter = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetAfterPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
+var arrayGetBetweenPath = "_ENTITY_._PARAMETERS_.array.getBetween.";
 
-
-
-
-
-
-
-
-
-var stringGetBetweenPath = "_ENTITY_._PARAMETERS_.string.getBetween.";
-zk().setContainer(stringGetBetweenPath + "array", function (el, param) {
-    var i, t, k, res = "";
+var doArrayGetBetweenByObj = {
+    "number": function(el,param){
+        return Math.abs(param);
+    },
+    "string": function(el,param){
+        return zk().getContainer(arrayIndexPath+"string")(el,param);
+    },
+    "regexp": function(el,param){
+        return zk().getContainer(arrayIndexPath+"regexp")(el,param);
+    }
+};
+/**
+ * Pour un argument de type array :
+ * Renvoie un tableau contenant les cases du tableau el entre deux valeur (string,regexp,number)
+ */
+zk().setContainer(arrayGetBetweenPath+"array", function(el, param){
+    var i, t, k, res = [];
     k = param.length;
     for (i = 0; i < k; i += 2) {
-        t = [Math.abs(param[i]), Math.abs(param[i + 1])];
-        if(isNaN(t[1])){ t[1] = el.length }
-        if (zk().toolbox().is(t[0], 'number') && zk().toolbox().is(t[1], 'number')) {
-            t = zk().toolbox().nSort(t);
-            res = res.concat(el.slice(t[0] + 1, t[1]))
+        var first = zk().toolbox().is(param[i]);
+        var second = zk().toolbox().is(param[i+1]);
+        if(doArrayGetBetweenByObj.hasOwnProperty(first) && doArrayGetBetweenByObj.hasOwnProperty(second)){
+            first = doArrayGetBetweenByObj[first](el,param[i]);
+            second = doArrayGetBetweenByObj[second](el,param[i+1]);
+            var tab = [first, second].sort();
+            res = res.concat(el.slice(tab[0]+1,tab[1]));
         }
     }
-    return res
+    return res;
 });
+
 Array.prototype.getBetween = function(param){
-    if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer(stringGetBetweenPath+zk().toolbox().is(param));
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayGetBetweenPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
-var stringGetAtPath = "_ENTITY_._PARAMETERS_.string.getAt.";
-zk().setContainer(stringGetAtPath + "array", function (el, param) {
-    var n, k = el.length, res = '';
+
+var arrayGetAtPath = "_ENTITY_._PARAMETERS_.array.getAt.";
+zk().setContainer(arrayGetAtPath + "number", function (el, param) { return zk().getContainer(arrayGetAtPath + "array")(el, [param]) });
+zk().setContainer(arrayGetAtPath + "array", function (el, param) {
+    var n, k = el.length, res = [];
     zk().toolbox().each(param, function () {
         n = Math.abs(this.v);
         if (zk().toolbox().is(n, 'number')) {
@@ -127,45 +210,47 @@ zk().setContainer(stringGetAtPath + "array", function (el, param) {
     });
     return res
 });
-zk().setContainer(stringGetAtPath + "number", function (el, param) { return zk().getContainer(stringGetAtPath + "array")(el, [param]) });
 Array.prototype.getAt = function(param){
-    if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer(stringGetAtPath+zk().toolbox().is(param));
-    return paramFunc ? paramFunc(this, param) : "";
+    if(param===undefined){ return [] }
+    var paramFunc = zk().getContainer(arrayGetAtPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : [];
 };
 
-var stringGetPath = "_ENTITY_._PARAMETERS_.string.get.";
+var arrayGetPath = "_ENTITY_._PARAMETERS_.array.get.";
 /**
  *  Pour un argument de type string :
  *  Renvoie le résultat dans un tableau
  */
-zk().setContainer(stringGetPath+"string", function(el, param){
-    var res = el.match(new RegExp(param, 'g'));
-    return res ? res : [];
+zk().setContainer(arrayGetPath+"string", function(el, param){
+  return zk().getContainer(arrayGetPath+"regexp")(el,new RegExp(param));
 });
 /**
  *  Pour un argument de type regexp :
  *  Renvoie le résultat dans un tableau
  */
-zk().setContainer(stringGetPath+"regexp", function(el, param){
-    (''+param).replace(/^\/(.*)\/([gi]*)$/, function(str, s1, s2){ param = new RegExp(s1, s2.trim("g")+"g") });
-    var res = el.match(param);
-    return res ? res : [];
+zk().setContainer(arrayGetPath+"regexp", function(el, param){
+    var res = [];
+    zk().toolbox().each(el,function(){
+        if(param.test(this.v)){
+            res.push(this.v);
+        }
+    });
+    return res;
 });
 /**
  * Pour un argument de type number :
  * - Renvoie les premiers résultats si l'argument <param> est positif
  * - Sinon renvoie les derniers éléments
  */
-zk().setContainer(stringGetPath + "number", function (el, param) { return ( param < 0 ) ? el.slice(param) : el.slice(0, param); });
+zk().setContainer(arrayGetPath + "number", function (el, param) { return ( param < 0 ) ? el.slice(param) : el.slice(0, param); });
 /**
  * Pour un argument de type array :
  * Le résulat est obtenu en fonction du type des éléments qui se trouve dans le tableau
  */
-zk().setContainer(stringGetPath + "array", function (el, param) {
+zk().setContainer(arrayGetPath + "array", function (el, param) {
     var res = [];
     zk().toolbox().each(param, function () {
-        var paramFunc = zk().getContainer(stringGetPath+zk().toolbox().is(this.v));
+        var paramFunc = zk().getContainer(arrayGetPath+zk().toolbox().is(this.v));
         if (paramFunc) {
             var r = paramFunc(el, this.v);
             if(r){ res = res.concat(r) }
@@ -174,8 +259,8 @@ zk().setContainer(stringGetPath + "array", function (el, param) {
     return res
 });
 Array.prototype.get = function(param){
-    if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.get."+zk().toolbox().is(param));
+    if(param===undefined){ return [] }
+    var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.array.get."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
