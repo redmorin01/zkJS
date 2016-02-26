@@ -63,6 +63,14 @@ Array.prototype.count = function(param){
 };
 
 
+Array.prototype.has = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayIndexPath+zk().toolbox().is(param));
+    var ok =  paramFunc ? paramFunc(this, param)+1 : false;
+    return ok ? true : false;
+};
+
+
 var arrayGetFirstPath = "_ENTITY_._PARAMETERS_.array.getFirst.";
 zk().setContainer(arrayGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
 zk().setContainer(arrayGetFirstPath+"string", function(el, param){
