@@ -45,7 +45,6 @@ Array.prototype.getLast = function(param){
     return paramFunc ? paramFunc(this, param) : "";
 };
 
-
 var arrayGetBeforePath = "_ENTITY_._PARAMETERS_.array.getBefore.";
 zk().setContainer(arrayGetBeforePath+"number", function(el, param){ return el.slice(0,Math.abs(param)) });
 zk().setContainer(arrayGetBeforePath+"string", function(el, param){
@@ -53,7 +52,7 @@ zk().setContainer(arrayGetBeforePath+"string", function(el, param){
 });
 zk().setContainer(arrayGetBeforePath+"regexp", function(el, param){
     var k = el.length;
-    for(var i = (k-1); i+1 ; i--){
+    for(var i = 0; i < k ; i++){
         if(param.test(el[i])){
             return el.slice(0,i);
         }
@@ -66,31 +65,34 @@ Array.prototype.getBefore = function(param){
     return paramFunc ? paramFunc(this, param) : "";
 };
 
-
-
-
-
-
-
-
-var stringGetAfterPath = "_ENTITY_._PARAMETERS_.string.getAfter.";
-zk().setContainer(stringGetAfterPath + "string", function (el, param) {
-    param = el.match(param);
-    if (!param) { return '' }
-    param = param[0];
-    var i = el.search(param); i += param.length - 1;
-    return zk().getContainer(stringGetAfterPath + "number")(el, i);
+var arrayGetAfterPath = "_ENTITY_._PARAMETERS_.array.getAfter.";
+zk().setContainer(arrayGetAfterPath+"number", function(el, param){ return el.slice(Math.abs(param)+1) });
+zk().setContainer(arrayGetAfterPath+"string", function(el, param){
+    return zk().getContainer(arrayGetAfterPath+"regexp")(el, new RegExp(param));
 });
-zk().setContainer(stringGetAfterPath+"regexp", function(el, param){
-    (''+param).replace(/^\/(.*)\/([gi]*)$/, function(str, s1, s2){ param = new RegExp(s1, s2.trim("g")+"g") });
-    return zk().getContainer(stringGetAfterPath + "string")(el, param);
+zk().setContainer(arrayGetAfterPath+"regexp", function(el, param){
+    var k = el.length;
+    for(var i = 0; i < k ; i++){
+        if(param.test(el[i])){
+            return el.slice(i+1);
+        }
+    }
+    return [];
 });
-zk().setContainer(stringGetAfterPath + "number", function (el, param) { return el.slice(Math.abs(param) + 1) });
 Array.prototype.getAfter = function(param){
-    if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer(stringGetAfterPath+zk().toolbox().is(param));
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayGetAfterPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
+
+
+
+
+
+
+
+
+
 
 var stringGetBetweenPath = "_ENTITY_._PARAMETERS_.string.getBetween.";
 zk().setContainer(stringGetBetweenPath + "array", function (el, param) {
