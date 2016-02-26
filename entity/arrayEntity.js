@@ -1,15 +1,28 @@
-String.prototype.each = function(func, args){ return zk().toolbox().each(this, func, args) };
+Array.prototype.each = function(func, args){ return zk().toolbox().each(this, func, args) };
 
-var stringGetFirstPath = "_ENTITY_._PARAMETERS_.string.getFirst.";
-zk().setContainer(stringGetFirstPath+"regexp", function(el, param){ var r = el.match(param); return r ? r[0] : ''; });
-zk().setContainer(stringGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
-String.prototype.getFirst = function(param){
+var arrayGetFirstPath = "_ENTITY_._PARAMETERS_.array.getFirst.";
+zk().setContainer(arrayGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
+zk().setContainer(arrayGetFirstPath+"string", function(el, param){
+    return zk().getContainer(arrayGetFirstPath+"regexp")(el, new RegExp(param));
+});
+
+zk().setContainer(arrayGetFirstPath+"regexp", function(el, param){
+    var k = el.length;
+    for(var i = 0; i < k; i++){
+        if(param.test(el[i])){
+            return [el[i]];
+        }
+    }
+    return [];
+});
+
+Array.prototype.getFirst = function(param){
     if(param===undefined){param=1}
-    var paramFunc = zk().getContainer(stringGetFirstPath+zk().toolbox().is(param));
+    var paramFunc = zk().getContainer(arrayGetFirstPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
 
-String.prototype.getMiddle = function(){
+Array.prototype.getMiddle = function(){
     var l = this.length, n = parseInt(l / 2);
     return (l % 2) ? this.slice(n, n + 1) : this.slice(n - 1, n + 1)
 };
@@ -23,7 +36,7 @@ zk().setContainer(stringGetLastPath+"regexp", function(el, param){
     return r ? r[r.length - 1] : '';
 });
 zk().setContainer(stringGetLastPath+"number", function(el, param){ return el.slice(-param) });
-String.prototype.getLast = function(param){
+Array.prototype.getLast = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(stringGetLastPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
@@ -42,7 +55,7 @@ zk().setContainer(stringGetBeforePath+"regexp", function(el, param){
     return zk().getContainer(stringGetBeforePath + "string")(el, param);
 });
 zk().setContainer(stringGetBeforePath + "number", function (el, param) { return el.slice(0, Math.abs(param)) });
-String.prototype.getBefore = function(param){
+Array.prototype.getBefore = function(param){
     if(param===undefined){ return "" }
     var paramFunc = zk().getContainer(stringGetBeforePath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
@@ -61,7 +74,7 @@ zk().setContainer(stringGetAfterPath+"regexp", function(el, param){
     return zk().getContainer(stringGetAfterPath + "string")(el, param);
 });
 zk().setContainer(stringGetAfterPath + "number", function (el, param) { return el.slice(Math.abs(param) + 1) });
-String.prototype.getAfter = function(param){
+Array.prototype.getAfter = function(param){
     if(param===undefined){ return "" }
     var paramFunc = zk().getContainer(stringGetAfterPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
@@ -81,7 +94,7 @@ zk().setContainer(stringGetBetweenPath + "array", function (el, param) {
     }
     return res
 });
-String.prototype.getBetween = function(param){
+Array.prototype.getBetween = function(param){
     if(param===undefined){ return "" }
     var paramFunc = zk().getContainer(stringGetBetweenPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
@@ -101,7 +114,7 @@ zk().setContainer(stringGetAtPath + "array", function (el, param) {
     return res
 });
 zk().setContainer(stringGetAtPath + "number", function (el, param) { return zk().getContainer(stringGetAtPath + "array")(el, [param]) });
-String.prototype.getAt = function(param){
+Array.prototype.getAt = function(param){
     if(param===undefined){ return "" }
     var paramFunc = zk().getContainer(stringGetAtPath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
@@ -146,7 +159,7 @@ zk().setContainer(stringGetPath + "array", function (el, param) {
     });
     return res
 });
-String.prototype.get = function(param){
+Array.prototype.get = function(param){
     if(param===undefined){ return "" }
     var paramFunc = zk().getContainer("_ENTITY_._PARAMETERS_.string.get."+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
