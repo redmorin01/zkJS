@@ -122,12 +122,16 @@ Array.prototype.getAfter = function(param){
 };
 
 var arrayGetBetweenPath = "_ENTITY_._PARAMETERS_.array.getBetween.";
+
 var doArrayGetBetweenByObj = {
     "number": function(el,param){
         return Math.abs(param);
     },
+    "string": function(el,param){
+        return zk().getContainer(arrayIndexPath+"string")(el,param);
+    },
     "regexp": function(el,param){
-
+        return zk().getContainer(arrayIndexPath+"regexp")(el,param);
     }
 };
 zk().setContainer(arrayGetBetweenPath+"array", function(el, param){
