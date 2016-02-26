@@ -3,7 +3,7 @@ var methods = {
     "getFirst": function(param){
         if(param===undefined){param=1}
         //console.log(param);
-    return this.parameter("getFirst."+zk().tool().is(param));
+    return this.parameter("getFirst."+zk().toolbox().is(param))(this,param);
     },
 
     "getMiddle": function(el){
@@ -14,27 +14,33 @@ var methods = {
 };
 
 var parameters = {
-    "getFirst.string": function(){
-
+    "getFirst.number": function($this, param){
+        var nodes = $this.get(), res = [];
+        zk().toolbox().each(nodes, function(){
+            var children = zk().toolbox().toArray(this.v.children);
+            res = res.concat(zk().getContainer(arrayGetFirstPath+"number")(children,param));
+        });
+        $this.set(res);
+        return $this;
+    },
+    "getFirst.string": function($this, param){
+        var nodes = $this.get(), res = [];
+        zk().toolbox().each(nodes, function(){
+            var first = this.v.querySelector(param);
+            if(first){res.push(first)}
+        });
+        $this.set(res);
+        return $this;
     },
     "getFirst.array": function(){},
-    "getFirst.number": function(el, param){
-
-        param = Math.abs(param);
-        return el.slice(0, param)
-    },
     "getFirst.regexp": function(){},
 
 };
 
 
-zk().register(function String($this, getParameter){
+zk().register(function Node($this, getParameter){
     this.get = function (opt) {
         if (opt === undefined) { return $this }
-    };
-    this.set = function (value) {
-        if (value !== undefined) { return $this = value }
-        return this;
     };
     this.set = function (value) {
         if (value !== undefined) { return $this = value }

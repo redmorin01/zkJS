@@ -280,7 +280,19 @@
     APP.setContainer("_ENTITY_._CONVERTOR_.htmlcollection", function (el) { return ["node", APP._TOOLBOX_.toArray(el)] });
     APP.setContainer("_ENTITY_._CONVERTOR_.nodelist", function (el) { return ["node", APP._TOOLBOX_.toArray(el)] });
 
-    $W.$ = function (selector) { return APP.get(selector); };
+    function launcher(selector){
+        var type = APP.toolbox().is(selector);
+        if(type == "array"){
+            selector = selector.join(",");
+            type = "string";
+        }
+        if(type == "string"){
+           selector = document.querySelectorAll(selector);
+        }
+
+        return APP.get(selector);
+    }
+    $W.$ = function (selector) { return launcher(selector) };
     $W.zk = function (selector) { if (selector === undefined) { return APP } };
 
 
