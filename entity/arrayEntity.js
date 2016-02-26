@@ -34,6 +34,33 @@ Array.prototype.index = function(param){
     return paramFunc ? paramFunc(this, param) : [];
 };
 
+var arrayCountPath = "_ENTITY_._PARAMETERS_.array.count.";
+zk().setContainer(arrayCountPath+"number", function(el, param){
+    var count = 0;
+    zk().toolbox().each(el,function(){
+        if(this.v === param){
+            count++;
+        }
+    });
+    return count;
+});
+zk().setContainer(arrayCountPath+"string", function(el, param){
+    return zk().getContainer(arrayCountPath+"regexp")(el, new RegExp(param));
+});
+zk().setContainer(arrayCountPath+"regexp", function(el, param){
+    var count = 0;
+    zk().toolbox().each(el,function(){
+        if(param.test(this.v)){
+            count++;
+        }
+    });
+    return count;
+});
+Array.prototype.count = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayCountPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : [];
+};
 
 
 var arrayGetFirstPath = "_ENTITY_._PARAMETERS_.array.getFirst.";
@@ -134,6 +161,10 @@ var doArrayGetBetweenByObj = {
         return zk().getContainer(arrayIndexPath+"regexp")(el,param);
     }
 };
+/**
+ * Pour un argument de type array :
+ * Renvoie un tableau contenant les cases du tableau el entre deux valeur (string,regexp,number)
+ */
 zk().setContainer(arrayGetBetweenPath+"array", function(el, param){
     var i, t, k, res = [];
     k = param.length;
