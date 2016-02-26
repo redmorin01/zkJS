@@ -1,5 +1,41 @@
 Array.prototype.each = function(func, args){ return zk().toolbox().each(this, func, args) };
 
+
+
+var arrayIndexPath = "_ENTITY_._PARAMETERS_.array.index.";
+/**
+ *  Pour un argument de type number :
+ * Le résulat est un nombre correspondant à l'index de l'élément recherché
+ */
+zk().setContainer(arrayIndexPath+"number", function(el, param){
+    var k = el.length;
+    for(var i=0; i < k; i++){
+        if(el[i] === param){
+            return i;
+        }
+    }
+    return null;
+});
+zk().setContainer(arrayIndexPath+"string", function(el, param){
+    return zk().getContainer(arrayIndexPath+"regexp")(el, new RegExp(param));
+});
+zk().setContainer(arrayIndexPath+"regexp", function(el, param){
+    var k = el.length;
+    for(var i = 0; i < k ; i++){
+        if(param.test(el[i])){
+            return i;
+        }
+    }
+    return null;
+});
+Array.prototype.index = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayIndexPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : [];
+};
+
+
+
 var arrayGetFirstPath = "_ENTITY_._PARAMETERS_.array.getFirst.";
 zk().setContainer(arrayGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
 zk().setContainer(arrayGetFirstPath+"string", function(el, param){
@@ -85,18 +121,37 @@ Array.prototype.getAfter = function(param){
     return paramFunc ? paramFunc(this, param) : [];
 };
 
-//var arrayGetBetweenPath = "_ENTITY_._PARAMETERS_.array.getBetween.";
-//zk().setContainer(arrayGetBetweenPath+"array", function(el, param){
-//    var k = 0;
-//
-//});
-//
-//Array.prototype.getBetween = function(param){
-//    if(param===undefined){param=1}
-//    var paramFunc = zk().getContainer(arrayGetBetweenPath+zk().toolbox().is(param));
-//    return paramFunc ? paramFunc(this, param) : "";
-//};
-//
+var arrayGetBetweenPath = "_ENTITY_._PARAMETERS_.array.getBetween.";
+var doArrayGetBetweenByObj = {
+    "number": function(el,param){
+        return Math.abs(param);
+    },
+    "regexp": function(el,param){
+
+    }
+};
+zk().setContainer(arrayGetBetweenPath+"array", function(el, param){
+    var i, t, k, res = [];
+    k = param.length;
+    for (i = 0; i < k; i += 2) {
+        var first = zk().toolbox().is(param[i]);
+        var second = zk().toolbox().is(param[i+1]);
+        if(doArrayGetBetweenByObj.hasOwnProperty(first) && doArrayGetBetweenByObj.hasOwnProperty(second)){
+            first = doArrayGetBetweenByObj[first](el,param[i]);
+            second = doArrayGetBetweenByObj[second](el,param[i+1]);
+            var tab = [first, second].sort();
+            res = res.concat(el.slice(tab[0]+1,tab[1]));
+        }
+    }
+    return res;
+});
+
+Array.prototype.getBetween = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayGetBetweenPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : "";
+};
+
 
 var arrayGetAtPath = "_ENTITY_._PARAMETERS_.array.getAt.";
 zk().setContainer(arrayGetAtPath + "number", function (el, param) { return zk().getContainer(arrayGetAtPath + "array")(el, [param]) });
