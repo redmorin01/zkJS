@@ -39,7 +39,6 @@ zk().setContainer(arrayGetLastPath+"regexp", function(el, param){
     }
     return [];
 });
-
 Array.prototype.getLast = function(param){
     if(param===undefined){param=1}
     var paramFunc = zk().getContainer(arrayGetLastPath+zk().toolbox().is(param));
@@ -47,33 +46,32 @@ Array.prototype.getLast = function(param){
 };
 
 
-
-
-
-
-
-
-
-
-
 var arrayGetBeforePath = "_ENTITY_._PARAMETERS_.array.getBefore.";
-zk().setContainer(arrayGetBeforePath + "string", function (el, param) {
-    param = el.match(param);
-    if (!param) { return '' }
-    param = param[0];
-    var i = el.search(param);
-    return zk().getContainer(stringGetBeforePath + "number")(el, i);
+zk().setContainer(arrayGetBeforePath+"number", function(el, param){ return el.slice(0,Math.abs(param)) });
+zk().setContainer(arrayGetBeforePath+"string", function(el, param){
+    return zk().getContainer(arrayGetBeforePath+"regexp")(el, new RegExp(param));
 });
-zk().setContainer(stringGetBeforePath+"regexp", function(el, param){
-    (''+param).replace(/^\/(.*)\/([gi]*)$/, function(str, s1, s2){ param = new RegExp(s1, s2.trim("g")+"g") });
-    return zk().getContainer(stringGetBeforePath + "string")(el, param);
+zk().setContainer(arrayGetBeforePath+"regexp", function(el, param){
+    var k = el.length;
+    for(var i = (k-1); i+1 ; i--){
+        if(param.test(el[i])){
+            return el.slice(0,i);
+        }
+    }
+    return [];
 });
-zk().setContainer(stringGetBeforePath + "number", function (el, param) { return el.slice(0, Math.abs(param)) });
 Array.prototype.getBefore = function(param){
-    if(param===undefined){ return "" }
-    var paramFunc = zk().getContainer(stringGetBeforePath+zk().toolbox().is(param));
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(arrayGetBeforePath+zk().toolbox().is(param));
     return paramFunc ? paramFunc(this, param) : "";
 };
+
+
+
+
+
+
+
 
 var stringGetAfterPath = "_ENTITY_._PARAMETERS_.string.getAfter.";
 zk().setContainer(stringGetAfterPath + "string", function (el, param) {

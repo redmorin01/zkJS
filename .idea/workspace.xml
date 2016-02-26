@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0b9b1a77-9e52-4f08-91ae-90f84f54392a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/entity/arrayEntity.js" afterPath="$PROJECT_DIR$/entity/arrayEntity.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
@@ -191,8 +190,8 @@
       <file leaf-file-name="arrayEntity.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/entity/arrayEntity.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.41169155">
-              <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.44278607">
+              <caret line="62" column="43" selection-start-line="62" selection-start-column="43" selection-end-line="62" selection-end-column="43" />
               <folding>
                 <element signature="e#331#415#0" expanded="false" />
                 <element signature="e#483#631#0" expanded="false" />
@@ -200,6 +199,10 @@
                 <element signature="e#890#1008#0" expanded="false" />
                 <element signature="e#1242#1325#0" expanded="false" />
                 <element signature="e#1392#1543#0" expanded="false" />
+                <element signature="e#1587#1759#0" expanded="false" />
+                <element signature="e#2003#2088#0" expanded="false" />
+                <element signature="e#2157#2314#0" expanded="false" />
+                <element signature="e#2360#2534#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -219,7 +222,7 @@
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-8.75">
-              <caret line="14" column="56" selection-start-line="14" selection-start-column="56" selection-end-line="14" selection-end-column="56" />
+              <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
               <folding />
             </state>
           </provider>
@@ -469,7 +472,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -2219,15 +2224,15 @@
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-8.75">
-          <caret line="14" column="56" selection-start-line="14" selection-start-column="56" selection-end-line="14" selection-end-column="56" />
+          <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/entity/arrayEntity.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41169155">
-          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.44278607">
+          <caret line="62" column="43" selection-start-line="62" selection-start-column="43" selection-end-line="62" selection-end-column="43" />
           <folding>
             <element signature="e#331#415#0" expanded="false" />
             <element signature="e#483#631#0" expanded="false" />
@@ -2235,6 +2240,10 @@
             <element signature="e#890#1008#0" expanded="false" />
             <element signature="e#1242#1325#0" expanded="false" />
             <element signature="e#1392#1543#0" expanded="false" />
+            <element signature="e#1587#1759#0" expanded="false" />
+            <element signature="e#2003#2088#0" expanded="false" />
+            <element signature="e#2157#2314#0" expanded="false" />
+            <element signature="e#2360#2534#0" expanded="false" />
           </folding>
         </state>
       </provider>
