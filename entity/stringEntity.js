@@ -26,6 +26,25 @@ String.prototype.index = function(param){
     return paramFunc ? paramFunc(this, param) : "";
 };
 
+var stringCountPath = "_ENTITY_._PARAMETERS_.string.count.";
+zk().setContainer(stringCountPath+"string", function(el, param){
+    return zk().getContainer(stringCountPath+"regexp")(el, new RegExp(param));
+});
+zk().setContainer(stringCountPath+"regexp", function(el, param){
+    var count = 0;
+    zk().toolbox().each(el,function(){
+        if(param.test(this.v)){
+            count++;
+        }
+    });
+    return count;
+});
+String.prototype.count = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(stringCountPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : "";
+};
+
 
 var stringGetFirstPath = "_ENTITY_._PARAMETERS_.string.getFirst.";
 zk().setContainer(stringGetFirstPath+"regexp", function(el, param){ var r = el.match(param); return r ? r[0] : ''; });
