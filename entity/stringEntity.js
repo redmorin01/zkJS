@@ -7,6 +7,26 @@
 String.prototype.trim = function(strReg){ return zk().toolbox().trim(this, strReg) };
 String.prototype.each = function(func, args){ return zk().toolbox().each(this, func, args) };
 
+var stringIndexPath = "_ENTITY_._PARAMETERS_.string.index.";
+zk().setContainer(stringIndexPath+"string", function(el, param){
+    return zk().getContainer(stringIndexPath+"regexp")(el, new RegExp(param));
+});
+zk().setContainer(stringIndexPath+"regexp", function(el, param){
+    var k = el.length;
+    for(var i = 0; i < k ; i++){
+        if(param.test(el[i])){
+            return i;
+        }
+    }
+    return null;
+});
+String.prototype.index = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(stringIndexPath+zk().toolbox().is(param));
+    return paramFunc ? paramFunc(this, param) : "";
+};
+
+
 var stringGetFirstPath = "_ENTITY_._PARAMETERS_.string.getFirst.";
 zk().setContainer(stringGetFirstPath+"regexp", function(el, param){ var r = el.match(param); return r ? r[0] : ''; });
 zk().setContainer(stringGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
