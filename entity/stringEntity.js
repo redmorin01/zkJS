@@ -46,6 +46,23 @@ String.prototype.count = function(param){
 };
 
 
+var stringHasPath = "_ENTITY_._PARAMETERS_.string.has.";
+zk().setContainer(stringHasPath+"string", function(el, param){
+    return zk().getContainer(stringHasPath+"regexp")(el, new RegExp(param));
+});
+zk().setContainer(stringHasPath+"regexp", function(el, param){
+    if(param.test(el)){
+        return true
+    }
+    return false;
+});
+String.prototype.has = function(param){
+    if(param===undefined){param=1}
+    var paramFunc = zk().getContainer(stringHasPath+zk().toolbox().is(param));
+    return  paramFunc ? paramFunc(this, param) : "";
+};
+
+
 var stringGetFirstPath = "_ENTITY_._PARAMETERS_.string.getFirst.";
 zk().setContainer(stringGetFirstPath+"regexp", function(el, param){ var r = el.match(param); return r ? r[0] : ''; });
 zk().setContainer(stringGetFirstPath+"number", function(el, param){ return el.slice(0, Math.abs(param)) });
